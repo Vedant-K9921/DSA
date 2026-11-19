@@ -25,13 +25,13 @@ class bst:
                         return
                     else:
                         temp=temp.right
-    def inorder(self):
-        if self.root is None:
-            return
-        else:
-            self.inorder(self.left)
-            print(self.data,end=" ")
-            self.inorder(self.right)
+def inorder(temp):
+    if temp is None:
+        return
+    else:
+        inorder(temp.left)
+        print(temp.data,end=" ")
+        inorder(temp.right)
 
 btree=bst()
 btree.insert(Node(10))
@@ -40,3 +40,4 @@ btree.insert(Node(2))
 btree.insert(Node(25))
 btree.insert(Node(13))
 btree.insert(Node(40))
+inorder(btree.root)
