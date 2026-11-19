@@ -1,71 +1,102 @@
-queue = []
-priority_names = {1: "Critical", 2: "Serious", 3: "Normal"}
+class Node:
+    def __init__(self, pid, name, priority):
+        self.pid = pid
+        self.name = name
+        self.priority = priority
+        self.next = None
 
 
-def enqueue(patient_id, name, priority):
-    if priority not in [1, 2, 3]:
-        print("Invalid priority! Enter 1, 2, or 3.")
-        return
-    queue.append((priority, patient_id, name))
-    print(f"Added: {name} (ID: {patient_id}) - {priority_names[priority]}")
+class PriorityQueue:
+    def __init__(self):
+        self.front = None
+
+    # Add Patient
+    def add_patient(self, pid, name, priority):
+        new_node = Node(pid, name, priority)
+
+        if self.front is None or priority < self.front.priority:
+            new_node.next = self.front
+            self.front = new_node
+        else:
+            temp = self.front
+
+            while temp.next is not None and temp.next.priority <= priority:
+                temp = temp.next
+
+            new_node.next = temp.next
+            temp.next = new_node
+
+        print("Patient added successfully!")
+
+    # Display Next Patient
+    def display_next(self):
+        if self.front is None:
+            print("No patients waiting.")
+        else:
+            print("\nNext Patient:")
+            print("ID:", self.front.pid)
+            print("Name:", self.front.name)
+            print("Priority:", self.front.priority)
+
+    # Remove Patient
+    def dequeue(self):
+        if self.front is None:
+            print("Queue is empty.")
+        else:
+            temp = self.front
+            print("Patient treated:", temp.name)
+            self.front = self.front.next
+
+    # Display All Patients
+    def display_all(self):
+        if self.front is None:
+            print("No patients waiting.")
+        else:
+            temp = self.front
+            print("\nWaiting Patients:")
+
+            while temp is not None:
+                print("ID:", temp.pid,
+                      "| Name:", temp.name,
+                      "| Priority:", temp.priority)
+                temp = temp.next
 
 
-def display_next():
-    if not queue:
-        print("No patients waiting.")
-        return
-    sorted_queue = sorted(queue, key=lambda x: x[0])
-    priority, patient_id, name = sorted_queue[0]
-    print(f"\nNext Patient -> ID: {patient_id} | Name: {name} | Condition: {priority_names[priority]}")
-
-
-def dequeue():
-    if not queue:
-        print("No patients to treat.")
-        return
-    queue.sort(key=lambda x: x[0])
-    priority, patient_id, name = queue.pop(0)
-    print(f"\nTreated & Removed -> ID: {patient_id} | Name: {name} ({priority_names[priority]})")
-
-
-def display_all():
-    if not queue:
-        print("\nWaiting list is empty.")
-        return
-    print("\n--- All Waiting Patients ---")
-    for priority, patient_id, name in sorted(queue, key=lambda x: x[0]):
-        print(f"ID: {patient_id} | Name: {name} | Priority: {priority} ({priority_names[priority]})")
-    print("----------------------------")
-
+# Main Program
+pq = PriorityQueue()
 
 while True:
-    print("\n=== Hospital Emergency System ===")
+    print("\n--- Hospital Emergency Management ---")
     print("1. Add Patient")
     print("2. Display Next Patient")
-    print("3. Treat Next Patient (Remove)")
-    print("4. Display All Waiting Patients")
+    print("3. Remove Patient")
+    print("4. Display All Patients")
     print("5. Exit")
 
-    choice = input("Enter choice (1-5): ")
+    choice = int(input("Enter your choice: "))
 
-    if choice == '1':
-        p_id = input("Enter Patient ID: ")
-        p_name = input("Enter Patient Name: ")
-        p_prio = int(input("Enter Priority (1=Critical, 2=Serious, 3=Normal): "))
-        enqueue(p_id, p_name, p_prio)
+    if choice == 1:
+        pid = input("Enter Patient ID: ")
+        name = input("Enter Patient Name: ")
+        priority = int(input("Enter Priority (1-Critical, 2-Serious, 3-Normal): "))
 
-    elif choice == '2':
-        display_next()
+        if priority >= 1 and priority <= 3:
+            pq.add_patient(pid, name, priority)
+        else:
+            print("Invalid priority!")
 
-    elif choice == '3':
-        dequeue()
+    elif choice == 2:
+        pq.display_next()
 
-    elif choice == '4':
-        display_all()
+    elif choice == 3:
+        pq.dequeue()
 
-    elif choice == '5':
-        print("Exiting...")
+    elif choice == 4:
+        pq.display_all()
+
+    elif choice == 5:
+        print("Exit..............")
         break
 
     else:
-        print("Invalid choice.")
+        print("Invalid choice!")
